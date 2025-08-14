@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="PT-Br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recibo - Financeiro - Ilha Azul</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(45deg, #023c59, #1e88e5);
+            color: #fff;
+            padding-top: 80px;
+        }
+
+        .container {
+            max-width: 900px;
+        }
+
+        #arquivoinput{
+            background: linear-gradient(45deg, #777777, #393939);
+            color: aquamarine;
+        }
+
+        label{
+            color: aquamarine;
+        }
+
+        #baseInput{
+            background: linear-gradient(45deg, #777777, #393939);
+            color: aquamarine;
+        }
+
+        .center-form {
+            background: linear-gradient(45deg, #023c59, #1e88e5);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            color: #333;
+        }
+
+        .btn-primary {
+            background-color: linear-gradient(45deg, #023c59, #1e88e5);
+            border-color:linear-gradient(45deg, #023c59, #1e88e5);
+        }
+
+        .btn-primary:hover {
+            background-color: #f8f8f8;
+            border-color: #0056b3;
+        }
+
+        .table-container {
+            margin-top: 40px;
+            overflow: auto;
+        }
+
+        #carregaRestorno {
+            margin-top: 20px;
+            background: linear-gradient(45deg, #023c59, #1e88e5);
+            border-radius: 5px;
+            padding: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        /* Custom scroll */
+        #carregaRestorno::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        #carregaRestorno::-webkit-scrollbar-thumb {
+            background: #007bff;
+            border-radius: 10px;
+        }
+
+        #resultadosTabela {
+            margin-top: 30px;
+        }
+
+        .table th, .table td {
+            text-align: center;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Blue Island🏝️</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light m-1" href="./index.html">Carregar a Base</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light m-1" href="./consulta.html">Consultas Recibos</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="center-form">
+            <h4 class="text-center mb-4">Carregar Base de Dados</h4>
+
+            <div class="form-group">
+                <label for="arquivoinput" class="form-label">Arquivo da Operadora</label>
+                <input class="form-control" type="file" id="arquivoinput" />
+            </div>
+
+            <div class="form-group">
+                <label for="baseInput" class="form-label">Arquivo da Base</label>
+                <input class="form-control" type="file" id="baseInput" />
+            </div>
+
+            <div class="form-group">
+                <label for="OperadorasEsc" class="form-label">Escolha a Operadora</label>
+                <select class="form-control" id="OperadorasEsc">
+                    <option value="" disabled selected>Escolha a Operadora</option>
+                    <option value="1">Up Health</option>
+                    <option value="2">Mediatorie</option>
+                    <option value="3">Samp</option>
+                </select>
+            </div>
+
+            <div class="btn-container">
+                <button type="button" class="btn btn-primary" id="btnEnviar" onclick="CarregaRetornoHeat()">Enviar</button>
+                <div id="loader" class="loader" style="display:none;"></div>
+            </div>
+
+            <pre id="carregaRestorno" class="bg-light p-3 border rounded mt-3"></pre>
+        </div>
+    </div>
+
+    <div class="container table-container">
+        <table class="table table-bordered table-striped" id="resultadosTabela">
+            <thead>
+                <tr>
+                    <th>CNPJ Titular</th>
+                    <th>SUB-ESTIPULANTE</th>
+                    <th>Consultor</th>
+                    <th>Produto</th>
+                    <th>Valor Calculado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Os resultados serão inseridos aqui via JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Importando os scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <!-- Importando o script principal JS -->
+    <script type="module" src="./js/main.js"></script> <!-- Importando o main.js -->
+</body>
+</html>
